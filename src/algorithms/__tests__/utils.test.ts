@@ -3,11 +3,13 @@ import {
   isWeekend,
   isHoliday,
   isWorkday,
+  isRestDay,
   getWorkdaysBetween,
   formatDateLabel,
   toDateStr,
   addDays,
   eachDayInRange,
+  buildPeriodLabel,
 } from '../utils'
 
 const holidays: Record<string, string> = {
@@ -48,5 +50,36 @@ describe('formatDateLabel', () => {
 describe('toDateStr', () => {
   it('Date를 "YYYY-MM-DD" 문자열로 변환', () => {
     expect(toDateStr(new Date('2025-03-03'))).toBe('2025-03-03')
+  })
+})
+
+describe('isRestDay', () => {
+  it('주말은 true', () => expect(isRestDay(new Date('2025-03-01'), holidays)).toBe(true))
+  it('공휴일은 true', () => expect(isRestDay(new Date('2025-05-05'), holidays)).toBe(true))
+  it('평일은 false', () => expect(isRestDay(new Date('2025-03-03'), holidays)).toBe(false))
+})
+
+describe('addDays', () => {
+  it('날짜에 N일을 더한다', () => {
+    expect(toDateStr(addDays(new Date('2025-03-03'), 3))).toBe('2025-03-06')
+  })
+  it('음수를 빼면 이전 날짜', () => {
+    expect(toDateStr(addDays(new Date('2025-03-03'), -1))).toBe('2025-03-02')
+  })
+})
+
+describe('eachDayInRange', () => {
+  it('범위 내 모든 날짜 반환', () => {
+    const days = eachDayInRange(new Date('2025-03-03'), new Date('2025-03-05'))
+    expect(days).toHaveLength(3)
+    expect(toDateStr(days[0])).toBe('2025-03-03')
+    expect(toDateStr(days[2])).toBe('2025-03-05')
+  })
+})
+
+describe('buildPeriodLabel', () => {
+  it('"M/D(요일) ~ M/D(요일)" 형식 반환', () => {
+    const label = buildPeriodLabel(new Date('2025-03-03'), new Date('2025-03-07'))
+    expect(label).toBe('3/3(월) ~ 3/7(금)')
   })
 })
