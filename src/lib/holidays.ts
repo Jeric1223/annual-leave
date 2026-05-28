@@ -25,9 +25,14 @@ async function fetchHolidaysFromApi(year: number): Promise<HolidayMap> {
   const map: HolidayMap = {}
   for (let month = 1; month <= 12; month++) {
     const mm = String(month).padStart(2, '0')
-    const res = await fetch(
-      `/api/holidays?serviceKey=${key}&solYear=${year}&solMonth=${mm}&_type=json&numOfRows=20`
-    )
+    const params = new URLSearchParams({
+      serviceKey: key,
+      solYear: String(year),
+      solMonth: mm,
+      _type: 'json',
+      numOfRows: '20',
+    })
+    const res = await fetch(`/api/holidays?${params}`)
     if (!res.ok) throw new Error(`API error: ${res.status}`)
     const json = await res.json()
     const items: ApiItem[] = json?.response?.body?.items?.item ?? []
