@@ -1,11 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Pretendard', system-ui, sans-serif;
+  --color-accent: #7c3aed;
+  --color-accent-light: #a78bfa;
+  --color-accent-bg: #f3e8ff;
+}
+
 * {
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Pretendard', system-ui, sans-serif;
-  background-color: #fafafa;
-  color: #111;
+@layer base {
+  body {
+    background-color: #fafafa;
+    color: #111;
+  }
 }
