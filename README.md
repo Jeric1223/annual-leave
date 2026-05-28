@@ -1,50 +1,87 @@
-# React + TypeScript + Vite
+# 🌴 hollyday
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+남은 연차 수와 초기화 날짜를 입력하면 6가지 알고리즘으로 최적의 연차 사용일을 추천해주는 웹 계산기.
 
-Currently, two official plugins are available:
+로그인 없이 계산기처럼 바로 사용할 수 있고, URL을 공유하면 같은 입력값을 그대로 전달할 수 있어요.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 추천 모드
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+| 모드 | 설명 |
+|------|------|
+| 균등 분산 | 초기화 날까지 남은 평일을 고르게 나눠 배치 |
+| 연휴 이어붙이기 | 공휴일·주말 앞뒤 평일을 분석해 효율 높은 순으로 추천 |
+| 황금연휴 스코어링 | 공휴일 밀도 높은 달(5월, 추석 등)에 집중 배치 |
+| 최소 연차 최대 연휴 | 연차 N일로 만들 수 있는 최장 연휴 TOP 5 |
+| 분기별 균형 | 1~3월, 4~6월, 7~9월, 10~12월 각 분기에 균등 배분 |
+| 시즌 집중 | 여름(7~8월) 또는 겨울(12~1월)에 몰아서 배치 |
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 시작하기
+
+### 1. 의존성 설치
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 2. 공휴일 API 키 발급
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+한국 공휴일 데이터는 **공공데이터포털**의 API를 사용해요. 키가 없어도 내장 폴백 데이터로 동작하지만, 정확한 공휴일 연동을 위해 발급을 권장해요.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+**발급 순서:**
+
+1. [data.go.kr](https://www.data.go.kr) 접속 후 회원가입/로그인
+2. 검색창에 **"한국천문연구원 특일 정보"** 검색
+3. **"한국천문연구원_특일 정보"** 오픈API → **활용신청**
+4. 신청 완료 후 **마이페이지 → 오픈API → 개발계정** 에서 **일반 인증키(Encoding)** 복사
+5. 프로젝트 루트에 `.env.local` 파일 생성 후 아래 내용 입력:
+
+```
+VITE_HOLIDAY_API_KEY=발급받은_키_붙여넣기
+```
+
+> 승인은 보통 즉시~수 분 내 자동 처리돼요. 일일 1,000건 무료.
+> API 키 없이도 2025~2026년 주요 공휴일은 폴백 데이터로 자동 사용돼요.
+
+### 3. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+브라우저에서 `http://localhost:5173` 접속
+
+---
+
+## 기술 스택
+
+- **React 18 + TypeScript** — 클라이언트 SPA
+- **Vite** — 빌드 도구
+- **Tailwind CSS v4** — 스타일링
+- **date-fns** — 날짜 계산
+- **Vitest** — 단위 테스트
+
+---
+
+## 스크립트
+
+```bash
+npm run dev        # 개발 서버
+npm run build      # 프로덕션 빌드
+npm run preview    # 빌드 결과 미리보기
+npm run test       # 테스트 실행
+```
+
+---
+
+## 배포
+
+정적 파일만으로 동작하므로 별도 서버 없이 배포 가능해요.
+
+```bash
+npm run build
+# dist/ 폴더를 Vercel, GitHub Pages, Netlify 등에 배포
 ```
