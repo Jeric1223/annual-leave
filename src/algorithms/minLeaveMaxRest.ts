@@ -27,7 +27,6 @@ export function minLeaveMaxRest({ remainingDays, resetDate, startDate, holidays 
       const days = eachDayInRange(s, e)
       const totalDays = days.length
       if (totalDays > len) {
-        const leaveSet = new Set(leave.map(toDateStr))
         candidates.push({ leaveDates: leave, period: { start: s, end: e, leaveDays: len, totalDays, label: buildPeriodLabel(s, e) }, totalDays })
       }
     }

@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import type { LeaveInput } from './algorithms/types'
+import { useHolidays } from './hooks/useHolidays'
+import { useLeaveRecommendation } from './hooks/useLeaveRecommendation'
+import { Sidebar } from './components/Sidebar'
+import { ResultPanel } from './components/ResultPanel'
+import { decodeState, pushState } from './lib/urlState'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [input, setInput] = useState<Partial<LeaveInput>>(() => ({
+    mode: 'even',
+    season: 'summer',
+    ...decodeState(),
+  }))
+  const [committed, setCommitted] = useState<LeaveInput | null>(null)
+
+  const year = input.resetDate?.getFullYear() ?? new Date().getFullYear()
+  const { data: holidays, loading, fromFallback } = useHolidays(year)
+  const result = useLeaveRecommendation(committed, holidays)
+
+  useEffect(() => { pushState(input) }, [input])
+
+  function handleCalculate() {
+    if (input.remainingDays && input.resetDate && input.mode) {
+      setCommitted(input as LeaveInput)
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#fafafa]">
+      <Sidebar
+        value={input}
+        onChange={setInput}
+        onCalculate={handleCalculate}
+      />
+      <ResultPanel
+        result={result}
+        holidays={holidays}
+        resetDate={input.resetDate ?? null}
+        loading={loading}
+        fromFallback={fromFallback}
+      />
+    </div>
   )
 }
-
-export default App
