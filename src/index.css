@@ -26,3 +26,22 @@
 .animate-fade-in-up {
   animation: fadeInUp 0.3s ease-out both;
 }
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e2e2;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c4b5fd;
+}

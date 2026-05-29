@@ -1,10 +1,8 @@
-import type { AlgorithmMode, Season } from '../algorithms/types'
+import type { AlgorithmMode } from '../algorithms/types'
 
 interface Props {
   mode: AlgorithmMode
-  season: Season
   onModeChange: (m: AlgorithmMode) => void
-  onSeasonChange: (s: Season) => void
 }
 
 const MODES: { value: AlgorithmMode; label: string; icon: string; desc: string }[] = [
@@ -16,7 +14,7 @@ const MODES: { value: AlgorithmMode; label: string; icon: string; desc: string }
   { value: 'season', label: '시즌 집중', icon: '◎', desc: '여름 또는 겨울' },
 ]
 
-export function ModeSelector({ mode, season, onModeChange, onSeasonChange }: Props) {
+export function ModeSelector({ mode, onModeChange }: Props) {
   return (
     <div className="space-y-1">
       {MODES.map((m) => (
@@ -38,31 +36,6 @@ export function ModeSelector({ mode, season, onModeChange, onSeasonChange }: Pro
           </div>
         </button>
       ))}
-
-      {mode === 'season' && (
-        <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
-          <button
-            onClick={() => onSeasonChange('summer')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-              season === 'summer'
-                ? 'bg-accent text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            ☀️ 여름
-          </button>
-          <button
-            onClick={() => onSeasonChange('winter')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-              season === 'winter'
-                ? 'bg-accent text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            ❄️ 겨울
-          </button>
-        </div>
-      )}
     </div>
   )
 }

@@ -4,10 +4,19 @@ import type { HolidayMap, LeaveRecommendation, LeavePeriod, Season } from './typ
 interface Input { remainingDays: number; resetDate: Date; startDate: Date; holidays: HolidayMap; season: Season }
 
 export function seasonFocus({ remainingDays, resetDate, startDate, holidays, season }: Input): LeaveRecommendation {
-  const year = startDate.getFullYear()
-  const ranges = season === 'summer'
-    ? [[new Date(year, 6, 1), new Date(year, 7, 31)]]
-    : [[new Date(year, 11, 1), new Date(year, 11, 31)], [new Date(year + 1, 0, 1), new Date(year + 1, 0, 31)]]
+  const startYear = startDate.getFullYear()
+  const endYear = resetDate.getFullYear()
+  const ranges: [Date, Date][] = []
+
+  for (let y = startYear; y <= endYear + 1; y++) {
+    if (season === 'summer') {
+      ranges.push([new Date(y, 6, 1), new Date(y, 7, 31)])
+    } else {
+      // 겨울: 해당 연도 12월 + 다음 연도 1월
+      ranges.push([new Date(y, 11, 1), new Date(y, 11, 31)])
+      ranges.push([new Date(y + 1, 0, 1), new Date(y + 1, 0, 31)])
+    }
+  }
 
   const leaveDates: Date[] = []
   const usedDates = new Set<string>()

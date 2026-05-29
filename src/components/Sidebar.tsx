@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { AlgorithmMode, LeaveInput, Season } from '../algorithms/types'
+import type { AlgorithmMode, LeaveInput } from '../algorithms/types'
 import { ModeSelector } from './ModeSelector'
 
 interface Props {
@@ -74,14 +74,37 @@ export function Sidebar({ value, onChange, onCalculate }: Props) {
         <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">추천 방식</p>
         <ModeSelector
           mode={value.mode ?? 'even'}
-          season={value.season ?? 'summer'}
           onModeChange={(m: AlgorithmMode) => onChange({ ...value, mode: m })}
-          onSeasonChange={(s: Season) => onChange({ ...value, season: s })}
         />
       </div>
 
+      {/* Season toggle — 스크롤 밖에서 부드럽게 펼쳐짐 */}
+      <div
+        className="overflow-hidden transition-all duration-200"
+        style={{
+          maxHeight: value.mode === 'season' ? '52px' : '0px',
+          opacity: value.mode === 'season' ? 1 : 0,
+        }}
+      >
+        <div className="flex gap-2 pt-3">
+          {(['summer', 'winter'] as const).map(s => (
+            <button
+              key={s}
+              onClick={() => onChange({ ...value, season: s })}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                (value.season ?? 'summer') === s
+                  ? 'bg-accent text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {s === 'summer' ? '☀️ 여름' : '❄️ 겨울'}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Calculate button */}
-      <div className="mt-5 pt-4 border-t border-gray-100">
+      <div className="mt-3 pt-4 border-t border-gray-100">
         <button
           onClick={onCalculate}
           disabled={!isValid}
@@ -115,7 +138,7 @@ export function Sidebar({ value, onChange, onCalculate }: Props) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-[280px] flex-shrink-0 bg-white border-r border-gray-100 min-h-screen p-6">
+      <aside className="hidden md:flex flex-col w-[280px] flex-shrink-0 bg-white border-r border-gray-100 h-screen sticky top-0 p-6">
         {innerContent}
       </aside>
     </>
